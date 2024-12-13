@@ -1,4 +1,6 @@
-const sum = require('./sum');
+const sum = require('./sum').sum;
+const fetchData = require('./sum').fetchData;
+const fetchPromise = require('./sum').fetchPromise;
 
 test('Expected to add 1+2 to equal 3', () => {
   expect(sum(1, 2)).toBe(3);
@@ -20,5 +22,32 @@ test('Throws on invalid input', () => {
   }).toThrow();
 });
 
-// Run the test
-// $ npm test
+test('API response', (done) => {
+  function callback(data) {
+    try {
+      expect(data).toBe('API response');
+      done();
+    } catch (error) {
+      done(error);
+    }
+  }
+
+  fetchData(callback);
+});
+
+test('API response using Promise', () => {
+  return fetchPromise().then((data) => {
+    expect(data).toBe('API response');
+  });
+});
+
+test('API response using async/await', async () => {
+  const data = await fetchPromise();
+  expect(data).toBe('API response');
+});
+
+test('mock implementation of basic function', () => {
+  const mock = jest.fn((x) => x + 42);
+  expect(mock(1)).toBe(43);
+  expect(mock).toHaveBeenCalledWith(1);
+});
